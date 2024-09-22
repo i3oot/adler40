@@ -1,0 +1,14 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/typescript-node",
+  
+    "customizations": {
+      "vscode": {
+        "extensions": ["streetsidesoftware.code-spell-checker"]
+      }
+    },
+    "features": {
+        "ghcr.io/dhoeric/features/google-cloud-cli:1": {},
+        "ghcr.io/robbert229/devcontainer-features/opentofu:1": {}
+    },
+    "forwardPorts": [3000]
+  }
