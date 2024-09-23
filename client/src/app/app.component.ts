@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,13 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.sass'
 })
-export class AppComponent {
-  title = 'client';
+export class AppComponent implements OnInit {
+  title = 'Adler40';
+
+  constructor(private socket: Socket) { }
+
+  ngOnInit(): void {
+    console.log("connecting")
+    this.socket.connect(console.log)
+  }
 }

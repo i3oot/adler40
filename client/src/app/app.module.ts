@@ -5,7 +5,8 @@ import { SocketIoModule, SocketIoConfig } from "ngx-socket-io";
 
 const socketConfig = {
     url: "//",
-    options: {}
+    options: {
+    }
 }
 
 @NgModule({
