@@ -1,0 +1,8 @@
+project_id          = ""
+region              = "europe-west1"
+service_name        = ""
+image               = ""
+repo_name           = ""
+atlas_public_key    = ""
+atlas_private_key   = ""
+atlas_region        = "WESTERN_EUROPE"
