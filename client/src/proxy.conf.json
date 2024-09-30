@@ -2,5 +2,17 @@
     "/socket.io": {
       "target": "http://localhost:3000",
       "secure": false
+    },
+    "/config.json": {
+      "target": "http://localhost:3000",
+      "secure": false
+    },
+    "/token": {
+      "target": "http://localhost:3000",
+      "secure": false,                  
+      "changeOrigin": true,
+      "cookieDomainRewrite": "localhost:3000", 
+      "logLevel": "debug"  
     }
+
   }

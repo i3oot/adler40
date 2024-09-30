@@ -1,14 +1,29 @@
 {
     "image": "mcr.microsoft.com/devcontainers/typescript-node",
-  
     "customizations": {
       "vscode": {
-        "extensions": ["streetsidesoftware.code-spell-checker"]
+        "extensions": [
+            "streetsidesoftware.code-spell-checker",
+            "gamunu.opentofu",
+            "ms-azuretools.vscode-docker"
+        ]
       }
     },
+    "postCreateCommand": "npm install -g @angular/cli",
+    "postAttachCommand": "echo 'Run to authenticate with gcp: gcloud auth application-default login.\nRun to connect to cloudflare tunnel: cloudflared tunnel run adler40'",
     "features": {
         "ghcr.io/dhoeric/features/google-cloud-cli:1": {},
-        "ghcr.io/robbert229/devcontainer-features/opentofu:1": {}
+        "ghcr.io/robbert229/devcontainer-features/opentofu:1": {},
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/joedmck/devcontainer-features/cloudflared:1": {}
     },
-    "forwardPorts": [3000]
+    "forwardPorts": [3000, 4200],
+    "portsAttributes": {
+      "3000": {
+        "label": "Backend"
+      },
+      "4200": {
+        "label": "Frontend"
+      }
+    }
   }

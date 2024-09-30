@@ -2,6 +2,8 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 import { SocketIoModule, SocketIoConfig } from "ngx-socket-io";
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+
 
 const socketConfig = {
     url: "//",
@@ -14,6 +16,11 @@ const socketConfig = {
         CommonModule,
         SocketIoModule.forRoot(socketConfig),
     ],
-    providers: [SocketIoModule]
+    providers: [
+        SocketIoModule,
+        provideHttpClient(
+            withInterceptorsFromDi()
+        ),
+    ]
 })
 export class AppModule {}

@@ -5,18 +5,24 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "ts-node server.ts"
+    "dev": "ts-node --project tsconfig.json server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "mongodb": "^6.9.0",
     "socket.io": "^4.8.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
     "@types/node": "^22.6.0",
     "@types/socket.io": "^3.0.1",
     "ts-node": "^10.9.2",

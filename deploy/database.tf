@@ -29,8 +29,8 @@ resource "mongodbatlas_database_user" "app" {
   username = "app"
   password = random_string.password.result
   roles {
-    role_name     = "readWrite"
-    database_name = mongodbatlas_serverless_instance.db.name
+    role_name     = "readWriteAnyDatabase"
+    database_name = "admin"
   }
 }
 
