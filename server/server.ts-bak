@@ -1,10 +1,13 @@
 import express from 'express';
-import session from 'express-session';
+import session, { Session, SessionData } from 'express-session';
 import MongoStore from 'connect-mongo';
 import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
+import { Socket, Server as SocketIOServer } from 'socket.io';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
+import { type Request } from "express";
+import { createServer } from "node:http";
+import { Server } from "socket.io";
 
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
@@ -23,6 +26,23 @@ type User = {
     }
   }
 
+  declare global {
+    namespace Express {
+        interface Request {
+            session: session.Session & Partial<session.SessionData>;
+            sessionID: string;
+            sessionStore: SessionStore;
+        }
+    }
+}
+
+declare module 'http' {
+    interface IncomingMessage {
+        cookieHolder?: string;
+        session: Session & Partial<session.SessionData>;
+    }
+}
+
 dotenv.config();
 
 const mongoUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/sessiondb';
@@ -30,7 +50,7 @@ const sessionSecret = process.env.SESSION_SECRET || 'defaultSecretKey';
 
 const sessionMiddleware = session({
 	secret: sessionSecret,
-	resave: false,
+	resave: true,
 	saveUninitialized: true,
 	store: MongoStore.create({
 		mongoUrl: mongoUrl,
@@ -51,7 +71,9 @@ const sessionMiddleware = session({
 
 const app = express();
 const server = http.createServer(app);
-const io = new SocketIOServer(server);
+const io = new SocketIOServer(server, {
+	path: '/game'
+  });
 
 app.use(sessionMiddleware);
 app.use(express.json());
@@ -104,7 +126,19 @@ app.post('/token', async (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
+	const session = socket.request.session;
+
+	socket.on('join', (data) => {
+		//TODO session check
+
+		console.log(session)
+		const room = data.room;
+		const username = session.user.username
+		console.log(`Client ${username} joining room: ${room}`);
+	
+		socket.emit('joinResponse', `You have joined room: ${room} ${username}`); //return game state
+		
+	  });
 
     socket.on('disconnect', () => {
         console.log('A user disconnected');

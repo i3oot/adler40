@@ -1,5 +1,4 @@
 import { Injectable, OnInit } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { Board } from './types/board.type';
 
 @Injectable({
@@ -7,10 +6,9 @@ import { Board } from './types/board.type';
 })
 export class BoardService implements OnInit {
 
-  constructor(private socket: Socket) { }
+  constructor() { }
   
   ngOnInit(): void {
-    this.socket.on("board", this.update)
   }
 
   update(update: Board) {

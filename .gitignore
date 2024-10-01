@@ -10,3 +10,6 @@ deploy/.terraform.lock.hcl
 server/node_modules/
 server/.env
 server/dist
+server2/node_modules/
+server2/.env
+server2/dist

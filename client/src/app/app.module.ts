@@ -1,23 +1,24 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import { SocketIoModule, SocketIoConfig } from "ngx-socket-io";
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
-
-const socketConfig = {
-    url: "//",
-    options: {
-    }
-}
+const config: SocketIoConfig = {
+  url: '//',  
+  options: {
+    path: '/.proxy/game',
+    autoConnect: false,
+    transports: ["websocket", "polling"]
+  }
+};
 
 @NgModule({
     imports: [
         CommonModule,
-        SocketIoModule.forRoot(socketConfig),
+        SocketIoModule.forRoot(config)
     ],
     providers: [
-        SocketIoModule,
         provideHttpClient(
             withInterceptorsFromDi()
         ),

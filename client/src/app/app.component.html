@@ -1,4 +1,9 @@
-<router-outlet></router-outlet>
-Instance ID: {{ instanceId() || "no instance"}}
+@if(connected) {
+    <router-outlet></router-outlet>
+} @else {
+<div class="connecting-message">
+Connecting...
+</div>
+}
 
 

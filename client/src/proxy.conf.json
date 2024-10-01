@@ -1,7 +1,10 @@
 {
-    "/socket.io": {
+    "/game": {
       "target": "http://localhost:3000",
-      "secure": false
+      "secure": false,
+      "ws": true,
+      "changeOrigin": true,
+      "logLevel": "debug" 
     },
     "/config.json": {
       "target": "http://localhost:3000",
@@ -11,8 +14,11 @@
       "target": "http://localhost:3000",
       "secure": false,                  
       "changeOrigin": true,
-      "cookieDomainRewrite": "localhost:3000", 
-      "logLevel": "debug"  
+      "cookieDomainRewrite": "1288563564021284987.discordsays.com", 
+      "logLevel": "debug" ,
+      "headers": {
+        "X-Forwarded-Proto": "https"      
+      } 
     }
 
   }
