@@ -11,7 +11,20 @@ const MongoStore = require('connect-mongo');
 
 const port = process.env.PORT || 3000;
 const mongoUrl = process.env.MONGODB_URI;
-const sessionSecret = process.env.SESSION_SECRET || 'defaultSecretKey';
+const sessionSecret = process.env.SESSION_SECRET;
+const Game = require('./game');
+const GameRepository = require('./gameRepository');
+
+const gameRepository = new GameRepository(mongoUrl);
+
+async function startServer() {
+  await gameRepository.connect();
+}
+
+startServer().catch((err) => {
+  console.error('Error starting the server:', err);
+});
+
 
 const app = express();
 app.set('trust proxy', 1);
@@ -25,6 +38,9 @@ const sessionMiddleware = session({
   store: MongoStore.create({
 		mongoUrl: mongoUrl,
 		dbName: "Adler40",
+    crypto: {
+      secret: sessionSecret
+    },
 		mongoOptions: {
 		  appName: "Adler40",
 		  tls: true,
@@ -35,7 +51,7 @@ const sessionMiddleware = session({
     secure: true,
     sameSite: "none",
     partitioned: true,
-    maxAge: 30 * 60* 1000, //30min
+    maxAge: 6 * 60 * 60* 1000, //6 hours
   }
 });
 
@@ -78,7 +94,8 @@ app.post('/token', async (req, res) => {
   });
 
   req.session.token = access_token;
-  req.session.user = await userResponse.json();
+  let user = await userResponse.json();
+  req.session.user = JSON.stringify(user);
   req.session.save(() => {
     res.send({ access_token });
     return;
@@ -86,7 +103,7 @@ app.post('/token', async (req, res) => {
 });
 
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log(`connection established`);
 
   const req = socket.request;
@@ -96,10 +113,19 @@ io.on("connection", (socket) => {
     console.log("No session.")
     socket.disconnect();
   } 
+  const user = JSON.parse(req.session.user);
 
   socket.join(room);
-  console.log(`user ${req.session.user.username} joined room ${room}`);
-  // do app logic join here an emit thing later io.to(room).emit("")
+  console.log(`user ${user.username} joined room ${room}`);
+  try{
+    const gameState = await gameRepository.loadGame(room);
+
+    socket.emit("gameState", gameState);
+  } catch (error) {
+    console.error('Error loading or creating game:', error);
+    socket.disconnect();
+    return;
+  }
 });
 
 
