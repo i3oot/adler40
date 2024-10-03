@@ -1,65 +1,31 @@
+
 const dotenv = require("dotenv");
 const dotenvExpand = require("dotenv-expand");
+const express = require("express");
+const MongoService = require('./mongo.service');
+const ServerService = require('./server.service');
+
+const GameRepository = require('./gameRepository');
+
+
 const env = dotenv.config();
 dotenvExpand.expand(env);
-
-const express = require("express");
-const { createServer } = require("node:http");
-const { Server } = require("socket.io");
-const session = require("express-session");
-const MongoStore = require('connect-mongo');
-
 const port = process.env.PORT || 3000;
 const mongoUrl = process.env.MONGODB_URI;
 const sessionSecret = process.env.SESSION_SECRET;
-const Game = require('./game');
-const GameRepository = require('./gameRepository');
 
-const gameRepository = new GameRepository(mongoUrl);
 
-async function startServer() {
-  await gameRepository.connect();
-}
-
-startServer().catch((err) => {
-  console.error('Error starting the server:', err);
-});
 
 
 const app = express();
-app.set('trust proxy', 1);
+const mongoService = new MongoService(mongoUrl, 'Adler40');
+const serverService = new ServerService(app, mongoService, sessionSecret);
+const gameRepository = new GameRepository(mongoService);
 
-const httpServer = createServer(app);
 
-const sessionMiddleware = session({
-  secret: sessionSecret,
-  resave: false,
-  saveUninitialized: true,
-  store: MongoStore.create({
-		mongoUrl: mongoUrl,
-		dbName: "Adler40",
-    crypto: {
-      secret: sessionSecret
-    },
-		mongoOptions: {
-		  appName: "Adler40",
-		  tls: true,
-		},
-	}),
-  cookie: {
-    httpOnly: false,
-    secure: true,
-    sameSite: "none",
-    partitioned: true,
-    maxAge: 6 * 60 * 60* 1000, //6 hours
-  }
+serverService.startServer(port).catch((err) => {
+  console.error('Error starting the server:', err);
 });
-
-app.use(sessionMiddleware);
-app.use(express.json());
-
-const io = new Server(httpServer, { path: '/game' });
-io.engine.use(sessionMiddleware);
 
 
 app.get('/config.json', (req, res) => {
@@ -103,7 +69,7 @@ app.post('/token', async (req, res) => {
 });
 
 
-io.on("connection", async (socket) => {
+serverService.io.on("connection", async (socket) => {
   console.log(`connection established`);
 
   const req = socket.request;
@@ -129,6 +95,3 @@ io.on("connection", async (socket) => {
 });
 
 
-httpServer.listen(port, () => {
-  console.log(`application is running at: http://localhost:${port}`);
-});

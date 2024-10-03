@@ -1,4 +1,3 @@
-// game.js
 class Game {
     constructor(room, players = []) {
       this._id = room;
