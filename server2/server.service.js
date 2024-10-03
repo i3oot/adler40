@@ -6,19 +6,19 @@ const MongoStore = require('connect-mongo');
 const {createAdapter} = require("@socket.io/mongo-adapter");
 
 class ServerService {
-  constructor(app, mongoService, sessionSecret) {
-    this.app = app
+  constructor(mongoService, sessionSecret) {
+    this.app = express();
     this.mongoService = mongoService;
     this.sessionSecret = sessionSecret;
-    this.httpServer = createServer(app);
-    this.io = new Server(this.httpServer, { path: '/game' });
+
+    this._setupApp();
   }
 
   async _setupClustering() {
     const mongoCollection = this.mongoService.db.collection('socketio');
     await mongoCollection.createIndex(
       { createdAt: 1 },
-      { expireAfterSeconds: 3600, background: true }
+      { expireAfterSeconds: 5 * 60, background: true }
     );
     
     this.io.adapter(createAdapter(mongoCollection, {
@@ -57,14 +57,20 @@ class ServerService {
 
   async _setupApp() {
     this.app.set('trust proxy', 1);
+    this.app.disable('x-powered-by');
     this.app.use(express.json());
+    this.httpServer = createServer(this.app);
+    this.io = new Server(this.httpServer, { path: '/game' });
+  }
+
+  async init() {
+    await this._setupApp();
+    await this.mongoService.connect();
+    await this._setupSessions();
+    await this._setupClustering();
   }
 
   async startServer(port) {
-    await this.mongoService.connect();
-    await this._setupApp();
-    await this._setupClustering();
-    await this._setupSessions();
     this.httpServer.listen(port, () => {
       console.log(`application is running at: http://localhost:${port}`);
     });

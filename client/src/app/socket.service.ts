@@ -17,5 +17,9 @@ export class SocketService {
     };
     
     this.socket.connect();
+    this.socket.on('connect', () => {
+      console.log("Socket connection established. Now joining the fun.")
+      this.socket.emit("join");
+    });
   }
 }
