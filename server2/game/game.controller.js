@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const {GameState} = require('./game')
 
 class GameController {
   constructor(gameRepository, user, socket) {
@@ -12,18 +13,22 @@ class GameController {
     const room = this._socket.handshake.query.room;
 
       // Create the new game document
-      const newGame = {
+      return {
+        _id: room,
+        scene: 'lobby',
         lobby: [player], // Add the creating player to the lobby
         updatedAt: new Date(), // Timestamp of when the game is created
-        gameState: _createNewGameState(),
+        gameState: this._createNewGameState(),
         scoreboard: {}, // Empty scoreboard
       };
+
+
   }
 
   _createNewGameState() {
     return {
       state: GameState.NEW, // Initial game state
-      availableDeck: _.shuffle(_deck()), // Empty available deck
+      availableDeck: _.shuffle(this._deck()), // Empty available deck
       playedDeck: [], // Empty played deck
       hands: {} // Empty hands for now
     };
@@ -51,7 +56,7 @@ class GameController {
       console.log(`Found existing game for room ${room}, loading state.`);
     } else {
       console.log(`No game found for room ${room}, creating a new one.`);
-      game = _createNewGame(room);
+      game = this._createNewGame(room);
     }
 
     this._gameRepository.saveGame(game);

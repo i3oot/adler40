@@ -16,8 +16,7 @@ export class AppComponent {
   private discord = inject(DiscordService)
   private socket = inject(SocketService)
   private instanceId = this.discord.instanceId
-  
-  connected = false
+  connected = this.socket.connected
 
   constructor() {
     effect(() => {
