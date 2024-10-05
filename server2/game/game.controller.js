@@ -7,30 +7,6 @@ class GameController {
     this._socket = socket;
   }
 
-  dispatch(eventName, ...args) {
-    if (typeof this[eventName] === 'function') {
-      this[eventName](...args);
-    } else {
-        console.log(`no handler for event: ${eventName}`);
-        socket.disconnect();
-    }
-  }
-
-  async join(){
-    const room = this._socket.handshake.query.room;
-    console.log(`${this._user.username} joins gameId ${room}`);
-    let game = await this._gameRepository.loadGame(room);
-
-    if (game) {
-      console.log(`Found existing game for room ${room}, loading state.`);
-    } else {
-      console.log(`No game found for room ${room}, creating a new one.`);
-      game = _createNewGame(room);
-    }
-
-    this._gameRepository.saveGame(game);
-  }
-
   _createNewGame() {
     const player = this._user;
     const room = this._socket.handshake.query.room;
@@ -56,6 +32,32 @@ class GameController {
   _deck() {
     return [1,2,3,4,5,6,7,8]
   }
+
+  dispatch(eventName, ...args) {
+    if (typeof this[eventName] === 'function') {
+      this[eventName](...args);
+    } else {
+        console.log(`no handler for event: ${eventName}`);
+        socket.disconnect();
+    }
+  }
+
+  async join(){
+    const room = this._socket.handshake.query.room;
+    console.log(`${this._user.username} joins gameId ${room}`);
+    let game = await this._gameRepository.loadGame(room);
+
+    if (game) {
+      console.log(`Found existing game for room ${room}, loading state.`);
+    } else {
+      console.log(`No game found for room ${room}, creating a new one.`);
+      game = _createNewGame(room);
+    }
+
+    this._gameRepository.saveGame(game);
+  }
+
+
 }
 
 module.exports = GameController;
