@@ -9,14 +9,13 @@ class GameController {
   }
 
   _createNewGame() {
-    const player = this._user;
     const room = this._socket.handshake.query.room;
 
       // Create the new game document
       return {
         _id: room,
         scene: 'lobby',
-        lobby: [player], // Add the creating player to the lobby
+        lobby: [], // Add the creating player to the lobby
         updatedAt: new Date(), // Timestamp of when the game is created
         gameState: this._createNewGameState(),
         scoreboard: {}, // Empty scoreboard
@@ -58,8 +57,11 @@ class GameController {
       console.log(`No game found for room ${room}, creating a new one.`);
       game = this._createNewGame(room);
     }
-
+    if(!game.lobby.includes(this._user)){
+      game.lobby.push(this._user);
+    }
     this._gameRepository.saveGame(game);
+    this._socket.emit("game-state", game);
   }
 
 

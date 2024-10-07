@@ -3,11 +3,13 @@ import { RouterOutlet } from '@angular/router';
 import { DiscordService } from './discord.service';
 import { inject } from '@angular/core';
 import { SocketService } from './socket.service';
+import { NgOptimizedImage } from '@angular/common';
+import { GameStateService } from './game-state.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NgOptimizedImage],
   templateUrl: './app.component.html',
   styleUrl: './app.component.sass'
 })
@@ -17,6 +19,7 @@ export class AppComponent {
   private socket = inject(SocketService)
   private instanceId = this.discord.instanceId
   connected = this.socket.connected
+  private gs = inject(GameStateService);
 
   constructor() {
     effect(() => {
@@ -25,7 +28,7 @@ export class AppComponent {
         console.log("Joining room ", id)
         this.socket.connectToRoom(id)
       }
-    })
+    }, { allowSignalWrites: true } )
   }
 
 }

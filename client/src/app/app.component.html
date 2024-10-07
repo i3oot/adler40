@@ -1,13 +1,14 @@
-@if (connected()) {
-    <router-outlet></router-outlet>
-} @else {
-    <div class="connecting-container">
-      <div class="loading-animation">
-        <img src="cards/back.png" alt="Loading" />
-      </div>
-      <div class="connecting-message">
-        Connecting...
-      </div>
+@if(!connected()) {
+  <div class="connecting-container">
+    <div class="loading-animation">
+      <img ngSrc="cards/back.png" alt="Loading" height="180" width="115" priority />
     </div>
+    <div class="connecting-message">
+      Connecting...
+    </div>
+  </div>  
+} @else {
+  <router-outlet>  </router-outlet>
 }
+
   

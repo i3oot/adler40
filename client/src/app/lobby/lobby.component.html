@@ -1,1 +1,13 @@
-<p>lobby works!</p>
+<div class="lobby-container">
+    <h1>Lobby</h1>
+    <div class="user-list">
+        @for (user of users(); track user.id) {
+            <div  class="user-item">
+                <img [src]="user.avatar" alt="Profile Picture" class="profile-picture" />
+                <span class="user-name">{{ user.global_name }}</span>
+              </div>
+        }
+    </div>
+    <button class="start-game-button" [disabled]="!isStartGameEnabled()" (click)="startGame()">Start Game</button>
+  </div>
+  
