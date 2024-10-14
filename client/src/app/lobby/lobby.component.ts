@@ -2,6 +2,7 @@ import { computeMsgId } from '@angular/compiler';
 import { Component, computed, effect, inject } from '@angular/core';
 import { GameStateService } from '../game-state.service';
 import { SocketService } from '../socket.service';
+import { User } from '../model/game-state';
 
 @Component({
   selector: 'app-lobby',
@@ -30,5 +31,13 @@ export class LobbyComponent {
 
   isStartGameEnabled() {
     return false;
+  }
+
+  profilePictureUrl(user: User): string {
+    if (user.avatar) {
+      return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+    } else {
+      return `https://cdn.discordapp.com/embed/avatars/${user.discriminator%5}.png`;
+    }
   }
 }

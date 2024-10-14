@@ -1,11 +1,11 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { GameState } from './model/game-state';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService {
+export class SocketService implements OnDestroy {
   private socket = inject(Socket)
   private connectedSignal = signal<boolean>(false);
   private gameStateSignal = signal<GameState|null>(null);
@@ -13,6 +13,8 @@ export class SocketService {
   constructor () {
     this.socket.on('connect', () => {
       console.log("Socket connection established. Now joining the fun.")
+//      document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+      window.addEventListener('pagehide', this.ngOnDestroy.bind(this));
       this.connectedSignal.set(true);
       this.socket.emit("join");
     });
@@ -20,6 +22,13 @@ export class SocketService {
     this.socket.on("game-state", (gs: GameState) => {
       this.gameStateSignal.set(gs);
     });
+  }
+
+  ngOnDestroy() {
+    console.log('User is leaving');
+    this.socket.disconnect();
+   // document.removeEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+    window.removeEventListener('pagehide', this.ngOnDestroy.bind(this));
   }
 
   connectToRoom(room: string) {

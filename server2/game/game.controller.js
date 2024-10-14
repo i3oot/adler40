@@ -15,7 +15,7 @@ class GameController {
       return {
         _id: room,
         scene: 'lobby',
-        lobby: [], // Add the creating player to the lobby
+        lobby: [], 
         updatedAt: new Date(), // Timestamp of when the game is created
         gameState: this._createNewGameState(),
         scoreboard: {}, // Empty scoreboard
@@ -57,11 +57,23 @@ class GameController {
       console.log(`No game found for room ${room}, creating a new one.`);
       game = this._createNewGame(room);
     }
-    if(!game.lobby.includes(this._user)){
+    if(!game.lobby.some(user => user.id === this._user.id)){
       game.lobby.push(this._user);
     }
     this._gameRepository.saveGame(game);
-    this._socket.emit("game-state", game);
+    this._socket.server.to(room).emit("game-state", game);    
+  }
+
+  async disconnect() {
+    const room = this._socket.handshake.query.room;
+    console.log(`${this._user.username} disconnects from gameId ${room}`);
+
+    let game = await this._gameRepository.loadGame(room);
+    if (game) {
+      game.lobby = game.lobby.filter(user => user.id !== this._user.id);
+      this._gameRepository.saveGame(game);
+      this._socket.server.to(room).emit("game-state", game);    
+    }
   }
 
 

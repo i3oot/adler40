@@ -82,10 +82,10 @@ serverService.init().then( () => {
     const user = JSON.parse(req.session.user);
     socket.onAny((eventName, ...args) => {
       const gameController = new GameController(gameRepository, user, socket);
+      socket.on("disconnect", () => gameController.disconnect());
       gameController.dispatch(eventName, ...args);
-    });  
-    socket.join(room);
-  
+    });
+    socket.join(room);  
   });
   
 }).then(() => {
