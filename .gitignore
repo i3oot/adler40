@@ -13,3 +13,4 @@ server/dist
 server2/node_modules/
 server2/.env
 server2/dist
+server3/.env

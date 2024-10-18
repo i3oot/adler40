@@ -85,7 +85,8 @@ serverService.init().then( () => {
       socket.on("disconnect", () => gameController.disconnect());
       gameController.dispatch(eventName, ...args);
     });
-    socket.join(room);  
+    socket.join(room);
+    socket.join(user.id)  
   });
   
 }).then(() => {

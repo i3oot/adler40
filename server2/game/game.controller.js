@@ -46,6 +46,20 @@ class GameController {
     }
   }
 
+
+  async playCard(){
+    const room = this._socket.handshake.query.room;
+    let game = await this._gameRepository.loadGame(room);
+
+    if (game) {
+      console.log(`Found existing game for room ${room}, loading state.`);
+
+      this._gameRepository.saveGame(game);
+      this._socket.server.to(room).emit("game-state", game);    
+    }
+  }
+
+
   async join(){
     const room = this._socket.handshake.query.room;
     console.log(`${this._user.username} joins gameId ${room}`);

@@ -1,0 +1,15 @@
+{
+  "tasks": {
+    "start": "deno run --allow-env --allow-net main.ts",
+    "dev": "deno run -A --watch main.ts"
+  },
+  "imports": {
+    "@dx/inject": "jsr:@dx/inject@^0.1.17",
+    "express": "npm:express",
+    "dotenv": "https://deno.land/std@0.224.0/dotenv/mod.ts"
+  },
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}

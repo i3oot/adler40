@@ -19,4 +19,8 @@ const CardColor = Object.freeze({
   BLACK: 'black'
 });
 
+class Card {
+
+}
+
 module.exports = {GameState, CardType, CardColor} ;
