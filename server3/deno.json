@@ -7,6 +7,8 @@
     "inject": "jsr:@dx/inject@^0.1.17",
     "mongo": "npm:mongodb",
     "express": "npm:express",
+    "express-session": "npm:express-session",
+    "socket.io": "npm:socket.io",
     "dotenv": "https://deno.land/std@0.224.0/dotenv/mod.ts"
   },
   "compilerOptions": {
