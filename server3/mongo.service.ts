@@ -1,65 +1,53 @@
-import { Injectable } from '@dx/inject';
-import type { EnvService } from "./env.service.ts";
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
+import { Injectable } from 'inject'
+import { MongoClient, ServerApiVersion, MongoClientOptions, Db } from 'mongo'
+import { EnvService } from "./env.service.ts";
 
 @Injectable()
-class MongoService {
+export class Client extends MongoClient {
   constructor(
-    private envService: EnvService
-  ) {
-    
-    this.mongoUrl = this.envService.env.MONGODB_URI
-    this.dbName = 
-    this.client = 
-    this.db = 
+    envService: EnvService
+  ) { 
+    const opts: MongoClientOptions = {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      }
+    } as MongoClientOptions
+    super(envService.env.MONGODB_URI, opts)
   }
+}
 
-  // Method to initialize and connect to the MongoDB
+
+@Injectable()
+export class MongoService {
+  private _db: Db|null = null
+ 
+  constructor(
+    readonly client: Client,
+    private readonly envService: EnvService
+
+  ){   }
+  
   async connect() {
-    if (!this.client) {
-      this.client = new MongoClient(this.mongoUrl, {
-        serverApi: {
-          version: ServerApiVersion.v1,
-          strict: true,
-          deprecationErrors: true,
-        },
-      });
-
-      try {
-        await this.client.connect();
-        this.db = this.client.db(this.dbName);
-        console.log('Connected to MongoDB');
-      } catch (error) {
-        console.error('Failed to connect to MongoDB', error);
-        throw error;
-      }
-    }
+      await this.client.connect();
+      this._db = this.client.db(this.envService.env.DB_NAME);
+      console.log('Connected to MongoDB');
   }
 
-  client() {
-    if (!this.client) {
-        throw new Error('Database connection is not established. Call connect() first.');
-      }
-      return this.client;
-  }
-
-  db() {
+  db() : Db {
     if (!this.db) {
       throw new Error('Database connection is not established. Call connect() first.');
     }
-    return this.db;
+    return this._db!;
   }
 
   // Method to close the connection
   async close() {
-    if (this.client) {
       await this.client.close();
-      this.client = null;
-      this.db = null;
+      this._db = null;
       console.log('MongoDB connection closed');
-    }
   }
-}
 
-module.exports = MongoService;
+
+}
