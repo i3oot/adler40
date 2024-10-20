@@ -6,13 +6,16 @@
   "imports": {
     "inject": "jsr:@dx/inject@^0.1.17",
     "mongo": "npm:mongodb",
+    "hooks": "node:async_hooks",
     "express": "npm:express",
     "express-session": "npm:express-session",
+    "connect-mongo": "npm:connect-mongo",
     "socket.io": "npm:socket.io",
+    "mongo-adapter": "npm:@socket.io/mongo-adapter",
     "dotenv": "https://deno.land/std@0.224.0/dotenv/mod.ts"
   },
   "compilerOptions": {
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
   }
 }
