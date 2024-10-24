@@ -4,7 +4,7 @@ import { MongoService } from "./mongo.service.ts";
 import session from "express-session";
 import { EnvService } from "./env.service.ts";
 import { SocketService } from "./socket.service.ts";
-import { default as connectMongoDBSession} from 'npm:connect-mongodb-session';
+import MongoStore from 'connect-mongo';
 
 @Injectable()
 export class SessionService {
@@ -18,9 +18,9 @@ export class SessionService {
   }
 
   async setupSessions() {
-    const MongoDBStore = connectMongoDBSession(session);
 
-    var store = new MongoDBStore({
+
+    var store = new MongoStore({
       uri: this.env.env.MONGODB_URI,
       collection: 'sessions',
       crypto: {
